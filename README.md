@@ -8,5 +8,5 @@ Based on the existing lr2jm perl script floating around.
 -		Added lr start and end transaction support
 -		Added web custom request support
 -		Added web add header support
--		Added web reg save paramater regular expressiono variation support
+-		Added web reg save param regexp variation support
 -		Various fixes and enchancements
