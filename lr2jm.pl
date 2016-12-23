@@ -248,9 +248,15 @@ sub web_url
     
     foreach my $argument (@arguments){
         $argument =~ s/"//g;
-        if ($argument =~ m/^URL=https*:\/\/(.*?)(\/.*)/) {
+        if ($argument =~ m/^URL=https*:\/\/(.*?)((\/.*)|(:(.*?)(\/.*)))/) {
             $requestdata{domain}= $1;
-            $requestdata{path}=$2;
+            
+			if(defined $5) {
+				$requestdata{path}=$6;
+				$requestdata{port}=$5;
+			} else {
+				$requestdata{path}=$2;
+			}
         }
         if ($argument =~ m/^Mode=(.*)/) {
             if ($1 =~ /HTML/) {
@@ -276,7 +282,6 @@ sub web_url
     push(@webrequests,$hashref);
 }
 
-
 sub web_submit_data
 {
     my $arguments = shift;
@@ -292,9 +297,16 @@ sub web_submit_data
         $argument =~ s/^\s*"*//g;
         $argument =~ s/"*\s*$//g;
         
-        if ($argument =~ m/^Action=https*:\/\/(.*?)(\/.*)/) {
+        if ($argument =~ m/^Action=https*:\/\/(.*?)((\/.*)|(:(.*?)(\/.*)))/) {
             $requestdata{domain}= $1;
-            $requestdata{path}=$2;
+     
+			
+			if(defined $5) {
+				$requestdata{path}=$6;
+				$requestdata{port}=$5;
+			} else {
+				$requestdata{path}=$2;
+			}
         }
         if ($argument =~ m/^Mode=(.*)/) {
             if ($1 =~ /HTML/) {
@@ -373,9 +385,16 @@ sub web_custom_request
         $argument =~ s/"*\s*$//g;
 
         
-        if ($argument =~ m/^URL=https*:\/\/(.*?)(\/.*)/) {
+        if ($argument =~ m/^URL=https*:\/\/(.*?)((\/.*)|(:(.*?)(\/.*)))/) {
             $requestdata{domain}= $1;
-            $requestdata{path}=$2;
+			
+			if(defined $5) {
+				$requestdata{path}=$6;
+				$requestdata{port}=$5;
+			} else {
+				$requestdata{path}=$2;
+			}
+			
         }
         if ($argument =~ m/^Mode=(.*)/) {
             if ($1 =~ /HTML/) {
@@ -938,7 +957,8 @@ sub writeJM
         $httpsampler->appendChild($property);
         
         $property = $jmeter->createElement('stringProp');
-        $property->setAttribute('name','HTTPSampler.port');     
+        $property->setAttribute('name','HTTPSampler.port');    
+		$property->addText(paramSubstitution(${$requestdata}{'port'}));   
         $httpsampler->appendChild($property);
         
         $property = $jmeter->createElement('stringProp');
